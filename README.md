@@ -92,7 +92,7 @@ curl -s localhost:3000/api/vesting/schedule/t1
 
 ### 1. Releases are the source of truth
 
-**Context.** The Schedule is the agreement. A Release is a financial event: tokens leaving the Schedule. That should be an immutable record you can audit later — each one visible, not only `released`. The starter keeps `releasedAmount` on the Schedule and updates it on POST, which collapses those two. The brief also wants release history.
+**Context.** The Schedule is the agreement. A Release is a financial transaction: tokens leaving the Schedule. That should be an immutable record you can audit later — each one visible, not only `released`. The starter keeps `releasedAmount` on the Schedule and updates it on POST, which collapses those two. The brief also wants release history.
 
 **Decision.** A Release is an append-only fact: which Schedule, how much, at which server `timestamp`. We never rewrite it. `released` (JSON `releasedAmount`) is the sum of that log. It does not live on the Schedule. Create cannot seed it.
 
