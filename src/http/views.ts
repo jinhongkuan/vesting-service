@@ -8,7 +8,7 @@ function amountJson(n: bigint): string {
 export type ReleaseView = {
   scheduleId: string;
   amount: string;
-  asOf: number;
+  timestamp: number;
 };
 
 export type VestingScheduleView = {
@@ -40,7 +40,7 @@ export function releaseView(release: Release): ReleaseView {
   return {
     scheduleId: release.scheduleId,
     amount: amountJson(release.amount),
-    asOf: release.asOf,
+    timestamp: release.timestamp,
   };
 }
 

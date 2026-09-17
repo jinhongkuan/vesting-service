@@ -38,11 +38,11 @@ export function release(
   schedule: VestingSchedule,
   releases: Release[],
   amount: bigint,
-  asOf: number,
+  timestamp: number,
 ): Release {
-  const releasable = releasableAmount(schedule, releases, asOf);
+  const releasable = releasableAmount(schedule, releases, timestamp);
   if (amount <= 0n || amount > releasable) {
     throw new CannotRelease(amount, releasable);
   }
-  return { scheduleId: schedule.id, amount, asOf };
+  return { scheduleId: schedule.id, amount, timestamp };
 }

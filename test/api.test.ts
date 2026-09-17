@@ -69,7 +69,7 @@ describe("vesting API", () => {
       const page = await request(app).get("/api/vesting/schedule/t1");
       expect(page.body.releasedAmount).toBe("500");
       expect(page.body.releases).toEqual([
-        { scheduleId: "t1", amount: "500", asOf: 150 },
+        { scheduleId: "t1", amount: "500", timestamp: 150 },
       ]);
 
       const snap = await request(app).get("/api/vesting/schedule/t1/releasable?at=150");

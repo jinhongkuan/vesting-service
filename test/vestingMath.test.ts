@@ -66,7 +66,7 @@ describe("releasableAmount", () => {
   });
 
   it("subtracts the log: 100 already Released, midpoint releasable is 400", () => {
-    const log: Release[] = [{ scheduleId: sample.id, amount: 100n, asOf: 140 }];
+    const log: Release[] = [{ scheduleId: sample.id, amount: 100n, timestamp: 140 }];
     expect(releasableAmount(sample, log, 150)).toBe(400n);
   });
 
@@ -80,19 +80,19 @@ describe("releasableAmount", () => {
 
   it("two Releases 100 then 150, midpoint releasable is 250", () => {
     const log: Release[] = [
-      { scheduleId: sample.id, amount: 100n, asOf: 140 },
-      { scheduleId: sample.id, amount: 150n, asOf: 145 },
+      { scheduleId: sample.id, amount: 100n, timestamp: 140 },
+      { scheduleId: sample.id, amount: 150n, timestamp: 145 },
     ];
     expect(releasableAmount(sample, log, 150)).toBe(250n);
   });
 
   it("Released 100 at midpoint; at end releasable is 900 (vested grew)", () => {
-    const log: Release[] = [{ scheduleId: sample.id, amount: 100n, asOf: 150 }];
+    const log: Release[] = [{ scheduleId: sample.id, amount: 100n, timestamp: 150 }];
     expect(releasableAmount(sample, log, 200)).toBe(900n);
   });
 
-  it("query asOf at start still subtracts later Releases (released is the whole log)", () => {
-    const log: Release[] = [{ scheduleId: sample.id, amount: 100n, asOf: 150 }];
+  it("query at start still subtracts later Releases (released is the whole log)", () => {
+    const log: Release[] = [{ scheduleId: sample.id, amount: 100n, timestamp: 150 }];
     expect(releasableAmount(sample, log, 100)).toBe(-100n);
   });
 });
@@ -102,7 +102,7 @@ describe("release", () => {
     expect(release(sample, [], 100n, 150)).toEqual({
       scheduleId: sample.id,
       amount: 100n,
-      asOf: 150,
+      timestamp: 150,
     });
   });
 

@@ -12,5 +12,5 @@ export type VestingSchedule = {
 export type Release = {
   scheduleId: string;
   amount: bigint;
-  asOf: number;
+  timestamp: number;
 };

@@ -68,9 +68,9 @@ curl -s localhost:3000/api/vesting/schedule/t1
 # {
 #   "id": "t1",
 #   "releasedAmount": "1000",
-#   "releases": [{ "scheduleId": "t1", "amount": "1000", "asOf": 1740000000 }]
+#   "releases": [{ "scheduleId": "t1", "amount": "1000", "timestamp": 1740000000 }]
 # }
-# asOf is the server clock at POST time.
+# amount is this Release (not the running total). timestamp is unix seconds at POST.
 ```
 
 | HTTP | `error`           | When                                                                          |
@@ -93,7 +93,7 @@ curl -s localhost:3000/api/vesting/schedule/t1
 
 **Context.** The Schedule is the agreement. A Release is a separate recorded event: you should be able to see each one, not only `released`. The starter keeps `releasedAmount` on the Schedule and updates it on POST, which collapses those two. The brief also wants release history.
 
-**Decision.** A Release is an append-only fact: which Schedule, how much, at which server `asOf`. We never rewrite it. `released` (JSON `releasedAmount`) is the sum of that log. It does not live on the Schedule. Create cannot seed it.
+**Decision.** A Release is an append-only fact: which Schedule, how much, at which server `timestamp`. We never rewrite it. `released` (JSON `releasedAmount`) is the sum of that log. It does not live on the Schedule. Create cannot seed it.
 
 ```
 store                         domain (pure)
@@ -152,11 +152,11 @@ The end cap picks up leftover from flooring.
 
 Asking “what would be `vested` at T?” is different. That does not create a Release.
 
-**Decision.** The `asOf` a Release is claimed against is the server’s now, not the caller’s. A snapshot may use a caller-supplied `asOf`; it is a what-if and cannot create a Release.
+**Decision.** The `timestamp` a Release is claimed against is the server’s now, not the caller’s. A query may use caller-supplied `at`; it is a what-if and cannot create a Release.
 
 On the wire: GET `?at=` is that what-if (omit it and we use the server clock). POST `/release` does not accept `at`. Unknown fields, including `at`, are **400 `invalid_payload`**, not silently dropped. Domain math takes `asOf` as an argument; it never calls `Date.now()`.
 
-Query `asOf` changes `vested` only. `released` is the sum of every Release, not only those with `asOf <= T`.
+Query `at` changes `vested` only. `released` is the sum of every Release, not only those with `timestamp <= T`.
 
 **Consequences.**
 

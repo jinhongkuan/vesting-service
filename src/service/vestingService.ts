@@ -47,9 +47,9 @@ export function createVestingService(clock: Clock) {
     release(id: string, amount?: bigint): { fact: Release; releases: Release[] } | undefined {
       const loaded = load(id);
       if (!loaded) return undefined;
-      const asOf = clock.now();
-      const qty = amount ?? releasableAmount(loaded.schedule, loaded.releases, asOf);
-      const fact = proposeRelease(loaded.schedule, loaded.releases, qty, asOf);
+      const timestamp = clock.now();
+      const qty = amount ?? releasableAmount(loaded.schedule, loaded.releases, timestamp);
+      const fact = proposeRelease(loaded.schedule, loaded.releases, qty, timestamp);
       appendRelease(fact);
       return { fact, releases: listReleases(id) };
     },
