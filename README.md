@@ -1,6 +1,6 @@
 # Vesting Service API
 
-**Branch:** `jin-kuan` (from `boiler-node`)  
+**Root Branch:** `boiler-node`  
 **Time spent:** 2 hours
 
 This service manages token vesting. You record an agreement for how many tokens someone earns, linearly, over a period of time. They can check how much has been vested so far and they can trigger a release for vested tokens.
