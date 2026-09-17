@@ -1,11 +1,10 @@
-﻿import type { VestingSchedule } from "../domain/types.js";
+import type { Release, VestingSchedule } from "../domain/types.js";
 
 export const seedSchedules: VestingSchedule[] = [
   {
     id: "1",
     beneficiary: "0x1111111111111111111111111111111111111111",
     totalAmount: 1_000_000n,
-    releasedAmount: 0n,
     startTimestamp: 1_700_000_000,
     durationSeconds: 1000,
     tokenSymbol: "DEMO",
@@ -15,7 +14,6 @@ export const seedSchedules: VestingSchedule[] = [
     id: "2",
     beneficiary: "0x1111111111111111111111111111111111111111",
     totalAmount: 500_000n,
-    releasedAmount: 100_000n,
     startTimestamp: 1_699_999_000,
     durationSeconds: 1000,
     tokenSymbol: "DEMO",
@@ -24,6 +22,7 @@ export const seedSchedules: VestingSchedule[] = [
 ];
 
 let schedules = seedSchedules.map((x) => ({ ...x }));
+let releases: Release[] = [];
 
 export function listByBeneficiary(beneficiary: string): VestingSchedule[] {
   return schedules.filter(
@@ -41,6 +40,15 @@ export function upsert(schedule: VestingSchedule): void {
   else schedules.push(schedule);
 }
 
+export function listReleases(scheduleId: string): Release[] {
+  return releases.filter((r) => r.scheduleId === scheduleId);
+}
+
+export function appendRelease(release: Release): void {
+  releases.push(release);
+}
+
 export function resetForTests(): void {
   schedules = seedSchedules.map((x) => ({ ...x }));
+  releases = [];
 }
