@@ -5,6 +5,8 @@
 
 This service manages token vesting. You record an agreement for how many tokens someone earns, linearly, over a period of time. They can check how much has been vested so far and they can trigger a release for vested tokens.
 
+Schedules and Releases live in memory for this process; they are gone if it restarts.
+
 ## Install / run / test
 
 Node 18+.
@@ -19,7 +21,6 @@ npm run build && npm start
 ## API
 
 Base: `http://localhost:3000/api/vesting`.
-In-memory. On boot, two example Schedules already exist (`id` `1` and `2`) so you can GET without creating first.
 
 | Method | Path                           | Description                                                                     |
 | ------ | ------------------------------ | ------------------------------------------------------------------------------- |
@@ -31,7 +32,7 @@ In-memory. On boot, two example Schedules already exist (`id` `1` and `2`) so yo
 
 Amounts on the wire are decimal strings.
 
-**Walkthrough.** 1000 tokens over 1000 seconds, starting `1700000000`. Halfway through, 500 is earned. `GET ?at=` asks about that moment and does not Release. `POST /release` uses **current time** (this Schedule is already finished, so it Releases the full 1000).
+**Walkthrough.**
 
 Create a Schedule:
 
