@@ -98,7 +98,7 @@ curl -s localhost:3000/api/vesting/schedule/t1
 ```
 store                         domain (pure)
 Schedule           ──┐
-                     ├── vested(schedule, asOf)
+                     ├── vested(schedule, at)
 Release[]            ├── sum(log) = released
                      └── releasable = vested - released
 ```
@@ -112,7 +112,7 @@ Release[]            ├── sum(log) = released
 
 ### 2. Repo type vs return type
 
-**Context.** Some fields on the return type are derived domain amounts (`released`, `vested`, `releasable`). They belong in the domain — they are how we talk about the Schedule — but they are not persisted. They are computed from the Schedule, the Release log, and `asOf`.
+**Context.** Some fields on the return type are derived domain amounts (`released`, `vested`, `releasable`). They belong in the domain — they are how we talk about the Schedule — but they are not persisted. They are computed from the Schedule, the Release log, and `at`.
 
 **Decision.** The repository stores domain types (the facts). HTTP returns View types, where those derived amounts are filled in.
 
@@ -127,14 +127,14 @@ Examples: GET Schedule injects `releasedAmount` and `releases`; a snapshot injec
 
 ### 3. Floor on the linear stretch
 
-**Context.** You cannot release more than has been earned. Amounts are integers, and `total * (asOf - start) / duration` does not always divide evenly. Rounding up would make `vested` larger than the curve has earned.
+**Context.** You cannot release more than has been earned. Amounts are integers, and `total * (at - start) / duration` does not always divide evenly. Rounding up would make `vested` larger than the curve has earned.
 
 **Decision.**
 
 ```
-asOf <= start              → vested = 0
-asOf >= start + duration   → vested = total
-else                       → floor(total * (asOf - start) / duration)
+at <= start              → vested = 0
+at >= start + duration   → vested = total
+else                     → floor(total * (at - start) / duration)
 ```
 
 The end cap picks up leftover from flooring.
@@ -154,7 +154,7 @@ Asking “what would be `vested` at T?” is different. That does not create a R
 
 **Decision.** The `timestamp` a Release is claimed against is the server’s now, not the caller’s. A query may use caller-supplied `at`; it is a what-if and cannot create a Release.
 
-On the wire: GET `?at=` is that what-if (omit it and we use the server clock). POST `/release` does not accept `at`. Unknown fields, including `at`, are **400 `invalid_payload`**, not silently dropped. Domain math takes `asOf` as an argument; it never calls `Date.now()`.
+On the wire: GET `?at=` is that what-if (omit it and we use the server clock). POST `/release` does not accept `at`. Unknown fields, including `at`, are **400 `invalid_payload`**, not silently dropped. Domain math takes `at` as an argument; it never calls `Date.now()`.
 
 Query `at` changes `vested` only. `released` is the sum of every Release, not only those with `timestamp <= T`.
 

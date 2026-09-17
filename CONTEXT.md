@@ -15,13 +15,13 @@ A beneficiary earns tokens over time on a Schedule. A Release records an amount 
 ### Amounts
 
 `vested`
-: How much of the Schedule has been earned at a given `asOf`. Derived from the Schedule and `asOf`. Never stored.
+: How much of the Schedule has been earned at a given `at`. Derived from the Schedule and `at`. Never stored.
 
 `released`
 : The sum of every Release on that Schedule. Not filtered by query time.
 
 `releasable`
-: `vested` minus `released` at a given `asOf`. Derived.
+: `vested` minus `released` at a given `at`. Derived.
 
 ### Relationships
 
@@ -34,7 +34,7 @@ A beneficiary earns tokens over time on a Schedule. A Release records an amount 
 - Use `Schedule`, not grant, lockup, or vest.
 - Use `Release`, not taking, transaction, claim, or withdrawal.
 - Use `vested`, `released`, and `releasable` — not unlocked, available, claimable, or balance.
-- Time is an argument named `asOf`. "Now" is not a domain concept.
+- Time is an argument named `at`. "Now" is not a domain concept.
 - Query `at` may be supplied by the caller. A Release `timestamp` is the server's now.
 - Amounts are integers in the token's smallest unit.
 - The brief's "transaction" is a `Release`. Do not use "transaction" in types or routes.
