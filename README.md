@@ -39,20 +39,16 @@ Create a Schedule:
 curl -s -X POST localhost:3000/api/vesting/schedules \
   -H 'Content-Type: application/json' \
   -d '{"id":"t1","beneficiary":"0xabc","totalAmount":"1000","startTimestamp":1700000000,"durationSeconds":1000,"tokenSymbol":"DEMO","tokenDecimals":18}'
-```
 
-```json
-{ "id": "t1", "releasedAmount": "0", "releases": [], "...": "..." }
+# { "id": "t1", "releasedAmount": "0", "releases": [], ... }
 ```
 
 How much was earned halfway (`at` = start + 500s) — a what-if, nothing Released:
 
 ```bash
 curl -s 'localhost:3000/api/vesting/schedule/t1/releasable?at=1700000500'
-```
 
-```json
-{ "scheduleId": "t1", "at": 1700000500, "vested": "500", "releasable": "500" }
+# { "scheduleId": "t1", "at": 1700000500, "vested": "500", "releasable": "500" }
 ```
 
 Release what is earned **now** (empty body = all currently releasable):
@@ -60,27 +56,22 @@ Release what is earned **now** (empty body = all currently releasable):
 ```bash
 curl -s -X POST localhost:3000/api/vesting/schedule/t1/release \
   -H 'Content-Type: application/json' -d '{}'
-```
 
-```json
-{ "scheduleId": "t1", "released": "1000", "totalReleased": "1000" }
+# { "scheduleId": "t1", "released": "1000", "totalReleased": "1000" }
 ```
 
 See the Schedule and the Release history (`releasedAmount` comes from the log):
 
 ```bash
 curl -s localhost:3000/api/vesting/schedule/t1
-```
 
-```json
-{
-  "id": "t1",
-  "releasedAmount": "1000",
-  "releases": [{ "scheduleId": "t1", "amount": "1000", "asOf": 1740000000 }]
-}
+# {
+#   "id": "t1",
+#   "releasedAmount": "1000",
+#   "releases": [{ "scheduleId": "t1", "amount": "1000", "asOf": 1740000000 }]
+# }
+# asOf is the server clock at POST time.
 ```
-
-`asOf` is whatever the server clock was at POST time.
 
 | HTTP | `error`           | When                                                                          |
 | ---- | ----------------- | ----------------------------------------------------------------------------- |
